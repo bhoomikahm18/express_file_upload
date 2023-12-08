@@ -2,13 +2,18 @@ const express = require('express');
 const { engine } = require('express-handlebars');
 const fileupload = require('express-fileupload');
 
-const app = express()
+const app = express();
 
-app.use(fileupload());
 
 //Templating engine
 app.engine('hbs', engine({ extname: '.hbs' }));
 app.set('view engine', 'hbs');
+
+
+app.use(fileupload());
+app.use(express.static('public'));
+app.use(express.static('upload'));
+
 
 app.get('/', (req, res) => {
     res.render('index')
