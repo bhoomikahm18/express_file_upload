@@ -12,12 +12,13 @@ app.set('view engine', 'hbs');
 
 app.use(fileupload());
 app.use(express.static('public'));
-app.use(express.static('upload'));
+app.use('/upload',express.static('upload'));
 
 
 app.get('/', (req, res) => {
     res.render('index')
 });
+
 
 app.post('/store', (req, res) => {
     let sampleFile;
