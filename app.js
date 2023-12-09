@@ -24,12 +24,23 @@ const pool = mysql.createPool({
 })
 
 pool.getConnection((err, connection) => {
-    if(err) throw err;
+    if (err) throw err;
     console.log('Connected');
 })
 
 app.get('/', (req, res) => {
-    res.render('index')
+    pool.getConnection((err, connection) => {
+        if (err) throw err;
+        console.log('Connected');
+
+        connection.query('SELECT * FROM user WHERE id = "1" ', (err, rows) => {
+            connection.release();
+
+            if (!err) {
+                res.render('index', { rows })
+            }
+        });
+    });
 });
 
 
@@ -58,7 +69,22 @@ app.post('/store', (req, res) => {
     //Use mv() to place file on server
     sampleFile.mv(uploadPath, (err) => {
         if (err) return res.status(400).send('No files where Found.');
-        res.send('File Uploaded!');
+        // res.send('File Uploaded!');
+        pool.getConnection((err, connection) => {
+            if (err) throw err;
+            console.log('Connected');
+
+            connection.query('UPDATE user SET profile_image = ? Where id = "1"', [newFileName], (err, rows) => {
+                // console.log(newFileName);
+                connection.release();
+
+                if (!err) {
+                    res.redirect('/')
+                } else {
+                    console.log(err);
+                }
+            })
+        })
     });
 });
 
