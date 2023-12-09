@@ -1,6 +1,7 @@
 const express = require('express');
 const { engine } = require('express-handlebars');
 const fileupload = require('express-fileupload');
+const mysql = require('mysql');
 
 const app = express();
 
@@ -12,8 +13,20 @@ app.set('view engine', 'hbs');
 
 app.use(fileupload());
 app.use(express.static('public'));
-app.use('/upload',express.static('upload'));
+app.use('/upload', express.static('upload'));
 
+const pool = mysql.createPool({
+    connectionLimit: 10,
+    host: 'localhost',
+    user: 'root',
+    password: 'root123',
+    database: 'user_profile'
+})
+
+pool.getConnection((err, connection) => {
+    if(err) throw err;
+    console.log('Connected');
+})
 
 app.get('/', (req, res) => {
     res.render('index')
